@@ -130,10 +130,38 @@ public class TlvBuilderTest {
         constructedTlv.addInnerTlv(berTlv2);
         BerTlv berConstructTlv2 = constructedTlv.build();
 
-        berConstructTlv2.logPretty();
+        //berConstructTlv2.logPretty();
         String tlvHexResult = ByteUtils.byteArrayToHexString(berConstructTlv2.asByteArray());
 
         assertEquals(tlvHexExpected, tlvHexResult);
+    }
+
+    @Test
+    public void createTlvObject_WithCustomTag() throws Exception {
+        BerTlvBuilder.Primitive primitiveTlvBuilder = BerTlvBuilder.Primitive.create(CustomTag.PRIMITIVE_TAG_1);
+        primitiveTlvBuilder.setValue("0x010203");
+        BerTlv berTlv1 = primitiveTlvBuilder.build();
+        //berTlv1.logPretty();
+
+        primitiveTlvBuilder.setTag(CustomTag.PRIMITIVE_TAG_3);
+        primitiveTlvBuilder.setValue("0x040506");
+        BerTlv berTlv2 = primitiveTlvBuilder.build();
+        //berTlv2.logPretty();
+
+        BerTlvBuilder.Constructed constructedTlvBuilder = BerTlvBuilder.Constructed.create(CustomTag.CONSTRUCTED_TAG_2);
+        constructedTlvBuilder.addInnerTlv(berTlv1);
+        constructedTlvBuilder.addInnerTlv(berTlv2);
+        BerTlv berTlv3 = constructedTlvBuilder.build();
+        //berTlv3.logPretty();
+
+        //System.out.println(ByteUtils.byteArrayToHexString(berTlv3.asByteArray()));
+
+        constructedTlvBuilder.setTag(CustomTag.CONSTRUCTED_TAG_4);
+        constructedTlvBuilder.addInnerTlv(berTlv2);
+        constructedTlvBuilder.addInnerTlv(berTlv1);
+        constructedTlvBuilder.addInnerTlv(berTlv3);
+        BerTlv berTlv4 = constructedTlvBuilder.build();
+        berTlv4.logPretty();
     }
 
 }

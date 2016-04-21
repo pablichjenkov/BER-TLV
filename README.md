@@ -17,9 +17,11 @@ For more info
 <BR>
 Create a primitive TLV object.
 ```
-  BerTlvBuilder.Primitive primitiveTlv = BerTlvBuilder.Primitive.create("01");
-  primitiveTlv.setValue("010203");
-  BerTlv berTlv = primitiveTlv.build();
+  //Create a builder and it will create your TLV object.
+
+  BerTlvBuilder.Primitive primitiveTlvBuilder = BerTlvBuilder.Primitive.create("01");
+  primitiveTlvBuilder.setValue("010203");
+  BerTlv berTlv = primitiveTlvBuilder.build();
   berTlv.logPretty();
 ```
 
@@ -27,20 +29,25 @@ Create a constructed TLV object
 ```
   // Notice the primitive TLV object is initialized with a BER-Primitive TAG.
   // Otherwise BerTlv.setValue(...) will throw an exception.
-  BerTlvBuilder.Primitive primitiveTlv = BerTlvBuilder.Primitive.create("01");
-  primitiveTlv.setValue("010203");
-  BerTlv berTlv1 = primitiveTlv.build();
 
-  primitiveTlv.setTag("03");
-  primitiveTlv.setValue("040506");
-  BerTlv berTlv2 = primitiveTlv.build();
+  BerTlvBuilder.Primitive primitiveTlvBuilder = BerTlvBuilder.Primitive.create("01");
+  primitiveTlvBuilder.setValue("010203");
+  BerTlv berTlv1 = primitiveTlvBuilder.build();
 
+  //Reuse the already created builder.
+
+  primitiveTlvBuilder.setTag("03");
+  primitiveTlvBuilder.setValue("040506");
+  BerTlv berTlv2 = primitiveTlvBuilder.build();
+
+  // Now put them into a Constructed TLV object.
   // Notice the enclosing TLV object is initialized with a BER-Constructed TAG.
   // Otherwise BerTlv.addInnerTlv(...) will throw an exception.
-  BerTlvBuilder.Constructed constructedTlv = BerTlvBuilder.Constructed.create("21");
-  constructedTlv.addInnerTlv(berTlv1);
-  constructedTlv.addInnerTlv(berTlv2);
-  BerTlv berTlv = constructedTlv.build();
+
+  BerTlvBuilder.Constructed constructedTlvBuilder = BerTlvBuilder.Constructed.create("21");
+  constructedTlvBuilder.addInnerTlv(berTlv1);
+  constructedTlvBuilder.addInnerTlv(berTlv2);
+  BerTlv berTlv = constructedTlvBuilder.build();
   
   berTlv.logPretty();
 ```
@@ -113,36 +120,36 @@ public enum CustomTag implements BerTagBase{
 
 //Now use you custom tag enum like this
 
-BerTlvBuilder.Primitive primitiveTlvBuilder1 = BerTlvBuilder.Primitive.create(CustomTag.PRIMITIVE_TAG_1);
-primitiveTlvBuilder1.setValue("0x010203");
-BerTlv berTlv1 = primitiveTlvBuilder1.build();
+BerTlvBuilder.Primitive primitiveTlvBuilder = BerTlvBuilder.Primitive.create(CustomTag.PRIMITIVE_TAG_1);
+primitiveTlvBuilder.setValue("0x010203");
+BerTlv berTlv1 = primitiveTlvBuilder.build();
 //berTlv1.logPretty();
 
-BerTlvBuilder.Primitive primitiveTlvBuilder2 = BerTlvBuilder.Primitive.create(CustomTag.PRIMITIVE_TAG_3);
-primitiveTlvBuilder2.setValue("0x040506");
-BerTlv berTlv2 = primitiveTlvBuilder2.build();
+primitiveTlvBuilder.setTag(CustomTag.PRIMITIVE_TAG_3);
+primitiveTlvBuilder.setValue("0x040506");
+BerTlv berTlv2 = primitiveTlvBuilder.build();
 //berTlv2.logPretty();
 
-BerTlvBuilder.Constructed constructedTlvBuilder1 = BerTlvBuilder.Constructed.create(CustomTag.CONSTRUCTED_TAG_2);
-constructedTlvBuilder1.addInnerTlv(berTlv1);
-constructedTlvBuilder1.addInnerTlv(berTlv2);
-BerTlv berTlv3 = constructedTlvBuilder1.build();
+BerTlvBuilder.Constructed constructedTlvBuilder = BerTlvBuilder.Constructed.create(CustomTag.CONSTRUCTED_TAG_2);
+constructedTlvBuilder.addInnerTlv(berTlv1);
+constructedTlvBuilder.addInnerTlv(berTlv2);
+BerTlv berTlv3 = constructedTlvBuilder.build();
 //berTlv3.logPretty();
 
 //System.out.println(ByteUtils.byteArrayToHexString(berTlv3.asByteArray()));
 
-BerTlvBuilder.Constructed constructedTlvBuilder2 = BerTlvBuilder.Constructed.create(CustomTag.CONSTRUCTED_TAG_4);
-constructedTlvBuilder2.addInnerTlv(berTlv2);
-constructedTlvBuilder2.addInnerTlv(berTlv1);
-constructedTlvBuilder2.addInnerTlv(berTlv3);
-BerTlv berTlv4 = constructedTlvBuilder2.build();
+constructedTlvBuilder.setTag(CustomTag.CONSTRUCTED_TAG_4);
+constructedTlvBuilder.addInnerTlv(berTlv2);
+constructedTlvBuilder.addInnerTlv(berTlv1);
+constructedTlvBuilder.addInnerTlv(berTlv3);
+BerTlv berTlv4 = constructedTlvBuilder.build();
 //berTlv4.logPretty();
 
-BerTlvBuilder.Constructed constructedTlvBuilder3 = BerTlvBuilder.Constructed.create(CustomTag.CONSTRUCTED_TAG_6);
-constructedTlvBuilder3.addInnerTlv(berTlv1);
-constructedTlvBuilder3.addInnerTlv(berTlv3);
-constructedTlvBuilder3.addInnerTlv(berTlv4);
-BerTlv berTlv5 = constructedTlvBuilder3.build();
+constructedTlvBuilder.setTag(CustomTag.CONSTRUCTED_TAG_6);
+constructedTlvBuilder.addInnerTlv(berTlv1);
+constructedTlvBuilder.addInnerTlv(berTlv3);
+constructedTlvBuilder.addInnerTlv(berTlv4);
+BerTlv berTlv5 = constructedTlvBuilder.build();
 berTlv5.logPretty();
 ```
 For more use cases you can check the junit module. There you will see other possible scenarios.
